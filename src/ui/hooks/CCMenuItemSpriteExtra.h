@@ -27,7 +27,7 @@ class $modify(MyCCMenuItemSpriteExtra, CCMenuItemSpriteExtra){
         }
     }
 
-    void unselected(){
+    /*void unselected(){
         if(!m_fields->m_isMCButton){
             CCMenuItemSpriteExtra::unselected();
         }
@@ -37,5 +37,5 @@ class $modify(MyCCMenuItemSpriteExtra, CCMenuItemSpriteExtra){
         if(!m_fields->m_isMCButton){
             CCMenuItemSpriteExtra::activate();
         }
-    }
+    }*/
 };
