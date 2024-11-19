@@ -2,7 +2,7 @@
 #include "MCButtonChild.h"
 
 MCButton* MCButton::create(gd::string text, float width, CCObject* target, SEL_MenuHandler selector){
-    
+
     auto ret = new MCButton();
 
     if (ret && ret->init()) {

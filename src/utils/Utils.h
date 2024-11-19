@@ -66,7 +66,7 @@ public:
 
         int pixelsWide = imgData.texture->getPixelsWide();
         int pixelsHigh = imgData.texture->getPixelsHigh();
-        
+
         CCTexture2DPixelFormat pixelFormat = imgData.texture->getPixelFormat();
 
         auto data = imgData.img->getData();
@@ -100,7 +100,7 @@ public:
         default:
             break;
         }
-        
+
     }
 
 
@@ -151,7 +151,7 @@ public:
 
         ccTexParams params = {GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT};
         dirt->getTexture()->setTexParameters(&params);
-        
+
         dirt->setZOrder(-999);
         dirt->setAnchorPoint({0, 0});
         dirt->setScale(7.5 * scale);
@@ -206,14 +206,14 @@ public:
         std::random_device dev;
         std::mt19937 rng(dev());
         std::uniform_int_distribution<uint32_t> chance(min, max);
-        
+
         return chance(rng);
     }
 
     static bool isMinceraft(){
 
         static bool isGenerated = false;
-        static bool result = false; 
+        static bool result = false;
         if(!isGenerated){
             result = random(1, 1000) == 1;
             isGenerated = true;
@@ -245,7 +245,7 @@ public:
     }
 
     static std::string wstrToStr(std::wstring wstr) {
-    
+
         int slength = (int)wstr.length() + 1;
         int len = wcstombs(nullptr, data(wstr), size(wstr));
         std::string r(len, '\0');
@@ -298,16 +298,16 @@ public:
     static CCMenuItemToggler* convertToggler(std::string text, CCMenuItemToggler* toggler){
 
         CCMenuItemToggler* newToggler = nullptr;
-        
+
         MCButton* onBtn;
         MCButton* offBtn;
 
         if(auto btn = static_cast<MyCCMenuItemSpriteExtra*>(toggler->m_onButton)){
-            onBtn = MCButton::create(fmt::format("{}: ON", text), 38.1f, btn->m_fields->m_buttonTarget, btn->m_fields->m_buttonCallback);
-            
+            // onBtn = MCButton::create(fmt::format("{}: ON", text), 38.1f, btn->m_fields->m_buttonTarget, btn->m_fields->m_buttonCallback);
+
         }
         if(auto btn = static_cast<MyCCMenuItemSpriteExtra*>(toggler->m_offButton)){
-            offBtn = MCButton::create(fmt::format("{}: OFF", text), 38.1f, btn->m_fields->m_buttonTarget, btn->m_fields->m_buttonCallback);
+            // offBtn = MCButton::create(fmt::format("{}: OFF", text), 38.1f, btn->m_fields->m_buttonTarget, btn->m_fields->m_buttonCallback);
         }
         if(!onBtn || !offBtn) return nullptr;
         if(auto btn = static_cast<MyCCMenuItemToggler*>(toggler)){
@@ -316,10 +316,10 @@ public:
             newToggler->setSizeMult(0);
 
             auto onBtnToggler = static_cast<MyCCMenuItemSpriteExtra*>(newToggler->m_onButton);
-            onBtnToggler->m_fields->m_isMCButton = true;
+            // onBtnToggler->m_fields->m_isMCButton = true;
 
             auto offBtnToggler = static_cast<MyCCMenuItemSpriteExtra*>(newToggler->m_offButton);
-            offBtnToggler->m_fields->m_isMCButton = true;
+            // offBtnToggler->m_fields->m_isMCButton = true;
 
             if(toggler->isOn()) newToggler->toggle(true);
         }
@@ -339,7 +339,7 @@ public:
     }
 
     static void trim(std::string& str) {
-        str.erase(str.find_last_not_of(' ')+1);   
+        str.erase(str.find_last_not_of(' ')+1);
         str.erase(0, str.find_first_not_of(' '));
     }
 
@@ -395,7 +395,7 @@ public:
                 content->setContentSize({content->getContentSize().width, node->getContentSize().height + gap * 2});
             }
         }
-        
+
         content->addChild(moreOptionsLayer);
         return content;
     }
