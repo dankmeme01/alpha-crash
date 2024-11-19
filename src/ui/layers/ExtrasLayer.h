@@ -4,14 +4,16 @@
 
 using namespace geode::prelude;
 
-class CrashLayer : public cocos2d::CCLayer {
+class ExtrasLayer : public cocos2d::CCLayer {
 protected:
     CCLayer* m_menuLayer;
+    CCMenu* m_bottomMenu;
 
     virtual bool init();
     virtual void keyBackClicked();
     void onBack(cocos2d::CCObject*);
 public:
-    static CrashLayer* create();
+    void onNewgrounds(CCObject*);
+    static ExtrasLayer* create();
     static cocos2d::CCScene* scene();
 };
