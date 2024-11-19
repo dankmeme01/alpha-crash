@@ -47,10 +47,9 @@ CCSprite* generateSprite(MCButtonChild* parent, gd::string textureName, float wi
 
 MCButtonChild* MCButtonChild::create(gd::string text, float width, CCObject* target, SEL_MenuHandler selector){
 
-    MCButtonChild* ret = new MCButtonChild();
+    auto ret = new MCButtonChild();
 
     CCSprite* buttonSprite = generateSprite(ret, "button.png"_spr, width);
-   
     MCLabel* label = MCLabel::create(text, "minecraft.fnt"_spr);
     label->setScale(0.12f);
     label->setZOrder(2);
@@ -64,11 +63,11 @@ MCButtonChild* MCButtonChild::create(gd::string text, float width, CCObject* tar
         ret->label = label;
         ret->width = width;
         label->setPosition({ret->getContentSize().width/2, ret->getContentSize().height/2});
-
-        return ret;
+    } else {
+        delete ret;
+        ret = nullptr;
     }
-    CC_SAFE_DELETE(ret);
-    return nullptr;
+    return ret;
 }
 
 void MCButtonChild::unselected(){
@@ -76,19 +75,6 @@ void MCButtonChild::unselected(){
 }
 
 void MCButtonChild::doClick(){
-    auto engine = FMODAudioEngine::sharedEngine();
-    auto system = engine->m_system;
-
-    FMOD::Channel* channel;
-    FMOD::Sound* sound;
-
-    std::string fullPath = CCFileUtils::sharedFileUtils()->fullPathForFilename("click.ogg"_spr, false);;
-    if(engine->m_sfxVolume > 0) {
-        system->createSound(fullPath.c_str(), FMOD_DEFAULT, nullptr, &sound);
-        system->playSound(sound, nullptr, false, &channel);
-        channel->setVolume(engine->m_sfxVolume);
-    }
-
     geode::Loader::get()->queueInMainThread([this]() { //delay it by a frame because for some reason it crashes the touch dispatcher otherwise ???
         if(m_pListener && m_pfnSelector){
             (m_pListener->*m_pfnSelector)(this);

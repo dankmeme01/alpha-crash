@@ -2,21 +2,22 @@
 #include "MCButtonChild.h"
 
 MCButton* MCButton::create(gd::string text, float width, CCObject* target, SEL_MenuHandler selector){
+    
+    auto ret = new MCButton();
 
-    MCButton* ret = new MCButton();
-
-    MCButtonChild* child = MCButtonChild::create(text, width, target, selector);
     if (ret && ret->init()) {
+        MCButtonChild* child = MCButtonChild::create(text, width, target, selector);
         ret->child = child;
         ret->setContentSize(child->getScaledContentSize());
         ret->addChild(child);
         ret->ignoreAnchorPointForPosition(false);
         ret->autorelease();
         ret->scheduleUpdate();
-        return ret;
+    } else {
+        delete ret;
+        ret = nullptr;
     }
-    CC_SAFE_DELETE(ret);
-    return nullptr;
+    return ret;
 }
 
 void MCButton::addSprite(CCSprite* sprite){
