@@ -18,13 +18,13 @@ class $modify(MyCCMenuItemSpriteExtra, CCMenuItemSpriteExtra){
     }
 
     void selected(){
-        if(!m_fields->m_isMCButton){
-            CCMenuItemSpriteExtra::selected();
-        }
-        else {
-            FMODAudioEngine::sharedEngine()->playEffect("click.ogg"_spr);
+        //if(!m_fields->m_isMCButton){
+            //CCMenuItemSpriteExtra::selected();
+        //}
+        //else {
+            //FMODAudioEngine::sharedEngine()->playEffect("click.ogg"_spr);
             (m_pListener->*m_pfnSelector)(this);
-        }
+        //}
     }
 
     /*void unselected(){
