@@ -22,7 +22,7 @@ class $modify(MyCCMenuItemSpriteExtra, CCMenuItemSpriteExtra){
             //CCMenuItemSpriteExtra::selected();
         //}
         //else {
-            //FMODAudioEngine::sharedEngine()->playEffect("click.ogg"_spr);
+            FMODAudioEngine::sharedEngine()->playEffect("click.ogg"_spr);
             (m_pListener->*m_pfnSelector)(this);
         //}
     }
