@@ -1,5 +1,4 @@
-#ifndef _MINECRAFT_BUTTON_CHILD_H_
-#define _MINECRAFT_BUTTON_CHILD_H_
+#pragma once
 
 #include <Geode/Geode.hpp>
 
@@ -10,16 +9,10 @@ class MCButtonChild : public CCMenuItemSprite
 public:
     CCSprite* edgeTexture;
     static MCButtonChild* create(gd::string text, float width, CCObject* target, SEL_MenuHandler selector);
-    void update(float dt);
-    void onHover();
-    void onHoverExit();
     void selected();
     void unselected();
     void activate();
     void doClick();
-    void setInvisible();
-    void setVisibleFade();
-    void setVisibleDelay(float dt);
 private:
     bool isHovering = false;
     bool isInvisible = false;
@@ -27,5 +20,3 @@ private:
     float width = 50;
     CCLabelBMFont* label;
 };
-
-#endif

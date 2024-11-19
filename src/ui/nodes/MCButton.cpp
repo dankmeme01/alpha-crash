@@ -3,12 +3,11 @@
 
 MCButton* MCButton::create(gd::string text, float width, CCObject* target, SEL_MenuHandler selector){
 
-    MCButton *ret = new (std::nothrow) MCButton();
+    MCButton* ret = new MCButton();
 
     MCButtonChild* child = MCButtonChild::create(text, width, target, selector);
-    ret->child = child;
-    if (ret && ret->init())
-    {
+    if (ret && ret->init()) {
+        ret->child = child;
         ret->setContentSize(child->getScaledContentSize());
         ret->addChild(child);
         ret->ignoreAnchorPointForPosition(false);
@@ -18,14 +17,6 @@ MCButton* MCButton::create(gd::string text, float width, CCObject* target, SEL_M
     }
     CC_SAFE_DELETE(ret);
     return nullptr;
-}
-
-void MCButton::setInvisible(){
-    this->child->setInvisible();
-}
-
-void MCButton::setVisibleFade(){
-    this->child->setVisibleFade();
 }
 
 void MCButton::addSprite(CCSprite* sprite){

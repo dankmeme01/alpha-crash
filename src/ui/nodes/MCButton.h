@@ -15,8 +15,6 @@ public:
     static MCButton* create(gd::string text, float width, CCObject* target, SEL_MenuHandler selector);
     
     MCButtonChild* child;
-    void setInvisible();
-    void setVisibleFade();
     void addSprite(CCSprite* sprite);
     CCSize getContentSize();
 };

@@ -1,46 +1,12 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/MenuLayer.hpp>
 #include <Geode/ui/GeodeUI.hpp>
-#include "../../utils/GlobalVars.h"
 #include "../../utils/Utils.h"
 #include "../nodes/MCLabel.h"
 #include "../nodes/MCButton.h"
 #include "../layers/ExtrasLayer.h"
 
 using namespace geode::prelude;
-
-class $modify(MenuLayer){
-	bool init() {
-		if (!MenuLayer::init()) {
-			return false;
-		}
-		if (CCNode* bottomMenu = this->getChildByIDRecursive("bottom-menu")){
-			bottomMenu->getChildByIDRecursive("achievements-button")->setVisible(false);
-			bottomMenu->getChildByIDRecursive("settings-button")->setVisible(false);
-			bottomMenu->getChildByIDRecursive("stats-button")->setVisible(false);
-			bottomMenu->getChildByIDRecursive("newgrounds-button")->setVisible(false);
-			bottomMenu->getChildByIDRecursive("geode.loader/geode-button")->setVisible(false);
-		}
-		if (Loader::get()->isModLoaded("alphalaneous.vanilla_pages")){
-
-			Mod* mod = Loader::get()->getLoadedMod("alphalaneous.vanilla_pages");
-
-			if(mod->getSettingValue<bool>("menulayer-right-menu")){
-				if(CCNode* rightSideMenu = this->getChildByIDRecursive("right-side-menu")){
-					if(AxisLayout* layout = typeinfo_cast<AxisLayout*>(rightSideMenu->getLayout())){
-						layout->setAxis(Axis::Row);
-					}
-					rightSideMenu->setContentSize({170, 70});
-					rightSideMenu->setUserObject("orientation", CCInteger::create(1));
-					rightSideMenu->removeChildByID("daily-chest-button");
-
-				}
-			}
-		}
-		
-		return true;
-	}
-};
 
 class $modify(MyMenuLayer, MenuLayer) {
 
@@ -138,145 +104,14 @@ class $modify(MyMenuLayer, MenuLayer) {
 
 		title->addChild(subTitle);
 		subTitle->setID("minecraft-subtitle"_spr);
-
-		MCLabel* versionText = MCLabel::create("Minecraft 2.206 (Geode)", "minecraft.fnt"_spr);
-		versionText->setAnchorPoint({0, 0});
-		versionText->setScale(0.42f);
-		this->addChild(versionText);
-		versionText->setID("version-text"_spr);
-
-		MCLabel* creatorName = MCLabel::create("Copyright RobTop Games AB. Do not distribute!", "minecraft.fnt"_spr);
-		creatorName->setAnchorPoint({1, 0});
-		creatorName->setScale(0.42f);
-		this->addChild(creatorName);
-		creatorName->setID("copyright-text"_spr);
-
-		std::wstring text = Utils::getSplashText();
-
-		MCLabel* splashText = MCLabel::create(text, "minecraft.fnt"_spr);
-
-		splashText->setColor({255,255,0});
-		splashText->setPosition({title->getContentSize().width,(title->getContentSize().height) /2});
-		splashText->setZOrder(3);
-		splashText->setRotation(-20);
 		
-		float newScale = text.size()/0.1;
-
-		float ratio = std::min(150 / splashText->getContentSize().width, 25 / splashText->getContentSize().height);
-
-		splashText->setScale(ratio/scale);
-		title->addChild(splashText);
-		splashText->setID("splash-text"_spr);
-
-		float animationLength = 0.25f;
-
-		CCActionInterval* scaleUp = CCEaseSineIn::create(CCScaleBy::create(animationLength, 1.08));
-		CCActionInterval* scaleDown = CCEaseSineOut::create(CCScaleBy::create(animationLength, 1/1.08));	
-
-		CCArray* actions = new CCArray();
-		actions->addObject(scaleUp);
-		actions->addObject(scaleDown);
-
-		CCSequence* moveSeq = CCSequence::create(actions);
-
-		splashText->runAction(CCRepeatForever::create(moveSeq));
-
 		this->scheduleUpdate();
 
 		setPositions(winSize);
 
-		if(GlobalVars::getSharedInstance()->isInitialLaunch){
-
-			CCLayerColor* layerColor = CCLayerColor::create(ccColor4B{239,50,61,255});
-			layerColor->setID("loading-bg"_spr);
-			layerColor->setContentSize(winSize);
-
-			this->addChild(layerColor);
-
-			CCSprite* titleSprite = Utils::createSprite("mojangstudios.png"_spr);
-
-			titleSprite->setPosition({winSize.width/2, winSize.height/2});
-			titleSprite->setScale(titleSprite->getScale()*0.3f);
-			titleSprite->setID("title-sprite"_spr);
-
-			this->addChild(titleSprite);
-
-			layerColor->runAction(CCFadeOut::create(1.0f));
-			titleSprite->runAction(CCFadeOut::create(1.0f));
-			
-			setAllInvisible();
-			this->scheduleOnce(schedule_selector(MyMenuLayer::setAllVisible), 1.0f);
-			GlobalVars::getSharedInstance()->isInitialLaunch = false;
-		}
-
-
 		CCScheduler::get()->scheduleSelector(schedule_selector(MyMenuLayer::myUpdate), this, 0.0, false);
 
 		return true;
-	}
-
-	void setVisible(CCMenu* menu){
-
-		for(int i = 0; i < menu->getChildrenCount(); i++){
-			MCButton* button = typeinfo_cast<MCButton*>(menu->getChildren()->objectAtIndex(i));
-			if(button) button->setVisibleFade();
-		}
-		
-	}
-
-	void setInvisible(CCMenu* menu){
-		
-		for(int i = 0; i < menu->getChildrenCount(); i++){
-			MCButton* button = typeinfo_cast<MCButton*>(menu->getChildren()->objectAtIndex(i));
-			if(button)button->setInvisible();
-		}
-		
-	}
-
-	void setAllInvisible(){
-
-		CCMenu* menu = typeinfo_cast<CCMenu*>(this->getChildByID("minecraft-menu"_spr));
-
-		CCSprite* title = typeinfo_cast<CCSprite*>(this->getChildByIDRecursive("minecraft-title"_spr));
-		CCSprite* subtitle = typeinfo_cast<CCSprite*>(this->getChildByIDRecursive("minecraft-subtitle"_spr));
-		MCLabel* splash = typeinfo_cast<MCLabel*>(this->getChildByIDRecursive("splash-text"_spr));
-		MCLabel* version = typeinfo_cast<MCLabel*>(this->getChildByID("version-text"_spr));
-		MCLabel* creator = typeinfo_cast<MCLabel*>(this->getChildByID("copyright-text"_spr));
-
-		setInvisible(menu);
-
-		splash->setOpacity(0);
-		title->setOpacity(0);
-		subtitle->setOpacity(0);
-		version->setOpacity(0);
-		creator->setOpacity(0);
-	}
-
-	void setAllVisible(float dt){
-
-		if(!Loader::get()->isModLoaded("geode.node-ids")) {
-			createQuickPopup("Node IDs", "Install Node IDs to get the full Minecraftify! experience", "Cancel", "Okay", [](FLAlertLayer*, bool p0){
-				if(p0) {
-					geode::openModsList();
-				}
-			}, true);
-		}
-
-		CCMenu* menu = typeinfo_cast<CCMenu*>(this->getChildByID("minecraft-menu"_spr));
-
-		CCSprite* title = typeinfo_cast<CCSprite*>(this->getChildByIDRecursive("minecraft-title"_spr));
-		CCSprite* subtitle = typeinfo_cast<CCSprite*>(this->getChildByIDRecursive("minecraft-subtitle"_spr));
-		CCLabelBMFont* splash = typeinfo_cast<CCLabelBMFont*>(this->getChildByIDRecursive("splash-text"_spr));
-		CCLabelBMFont* version = typeinfo_cast<CCLabelBMFont*>(this->getChildByID("version-text"_spr));
-		CCLabelBMFont* creator = typeinfo_cast<CCLabelBMFont*>(this->getChildByID("copyright-text"_spr));
-
-		setVisible(menu);
-
-		splash->runAction(CCFadeIn::create(1.0f));
-		subtitle->runAction(CCFadeIn::create(1.0f));
-		title->runAction(CCFadeIn::create(1.0f));
-		version->runAction(CCFadeIn::create(1.0f));
-		creator->runAction(CCFadeIn::create(1.0f));
 	}
 
 	void onMods(CCObject* sender) {
@@ -323,8 +158,6 @@ class $modify(MyMenuLayer, MenuLayer) {
 		MCButton* extrasButton = typeinfo_cast<MCButton*>(menu->getChildByID("extras-button"_spr));
 
 		CCSprite* title = typeinfo_cast<CCSprite*>(this->getChildByID("minecraft-title"_spr));
-		MCLabel* version = typeinfo_cast<MCLabel*>(this->getChildByID("version-text"_spr));
-		MCLabel* creator = typeinfo_cast<MCLabel*>(this->getChildByID("copyright-text"_spr));
 
 		playButton->setPosition({winSize.width/2, winSize.height/2+45});
 		editButton->setPosition({winSize.width/2, winSize.height/2+23});
@@ -336,7 +169,5 @@ class $modify(MyMenuLayer, MenuLayer) {
 		extrasButton->setPosition({winSize.width/2.0f + 98.5f, winSize.height/2-28});
 
 		title->setPosition({winSize.width/2.0f, winSize.height-55});
-		creator->setPosition({winSize.width-2,0});
-		version->setPosition({2,0});
 	}
 };

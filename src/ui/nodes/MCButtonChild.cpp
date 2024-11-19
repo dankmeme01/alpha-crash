@@ -47,8 +47,7 @@ CCSprite* generateSprite(MCButtonChild* parent, gd::string textureName, float wi
 
 MCButtonChild* MCButtonChild::create(gd::string text, float width, CCObject* target, SEL_MenuHandler selector){
 
-    MCButtonChild *ret = new (std::nothrow) MCButtonChild();
-    ret->width = width;
+    MCButtonChild* ret = new MCButtonChild();
 
     CCSprite* buttonSprite = generateSprite(ret, "button.png"_spr, width);
    
@@ -56,14 +55,14 @@ MCButtonChild* MCButtonChild::create(gd::string text, float width, CCObject* tar
     label->setScale(0.12f);
     label->setZOrder(2);
 
-    if (ret && ret->initWithNormalSprite(buttonSprite, nullptr, nullptr, target, selector))
-    {
+    if (ret && ret->initWithNormalSprite(buttonSprite, nullptr, nullptr, target, selector)) {
         ret->autorelease();
         ret->scheduleUpdate();
         ret->setScale(3.5);
         ret->addChild(label);
         ret->setAnchorPoint({0,0});
         ret->label = label;
+        ret->width = width;
         label->setPosition({ret->getContentSize().width/2, ret->getContentSize().height/2});
 
         return ret;
@@ -72,104 +71,32 @@ MCButtonChild* MCButtonChild::create(gd::string text, float width, CCObject* tar
     return nullptr;
 }
 
-
-void setSpritesInvisible(CCNode* node){
-    for(int i = 0; i < node->getChildrenCount(); i++){
-        CCSprite* spr = typeinfo_cast<CCSprite*>(node->getChildren()->objectAtIndex(i));
-        if(spr){
-            spr->setOpacity(0);
-            setSpritesInvisible(spr);
-        }
-    }
-}
-
-void setSpritesVisible(CCNode* node){
-
-    for(int i = 0; i < node->getChildrenCount(); i++){
-        CCSprite* spr = typeinfo_cast<CCSprite*>(node->getChildren()->objectAtIndex(i));
-        if(spr){
-            spr->runAction(CCFadeIn::create(1.0f));
-            setSpritesVisible(spr);
-        }
-    }
-}
-
-void MCButtonChild::setInvisible(){
-    this->isInvisible = true;
-    this->label->setOpacity(0);
-    setSpritesInvisible(this);
-
-}
-
-void MCButtonChild::setVisibleFade(){
-
-    if(!this->fadeStarted){
-        this->fadeStarted = true;
-        this->label->runAction(CCFadeIn::create(1.0f));
-        setSpritesVisible(this);
-        this->scheduleOnce(schedule_selector(MCButtonChild::setVisibleDelay), 1.0f);
-    }
-
-}
-
-void MCButtonChild::setVisibleDelay(float dt){
-    this->isInvisible = false;
-    this->fadeStarted = false;
-}
-
-void MCButtonChild::onHover(){
-    if(!isInvisible){
-        CCSprite* buttonSprite = generateSprite(this, "button_highlighted.png"_spr, width);
-        this->setNormalImage(buttonSprite);
-    }
-}
-
-void MCButtonChild::onHoverExit(){
-
-    if(!isInvisible){
-        CCSprite* buttonSprite = generateSprite(this, "button.png"_spr, width);
-        this->setNormalImage(buttonSprite);
-    }
-}
-
 void MCButtonChild::unselected(){
-    onHoverExit();
+    
 }
 
 void MCButtonChild::doClick(){
-    bool doAndroidBypass = false;
+    auto engine = FMODAudioEngine::sharedEngine();
+    auto system = engine->m_system;
 
-    #ifdef GEODE_IS_ANDROID
-    doAndroidBypass = true;
-    #endif
+    FMOD::Channel* channel;
+    FMOD::Sound* sound;
 
-    if(this->isHovering || doAndroidBypass){
-
-        auto engine = FMODAudioEngine::sharedEngine();
-        auto system = engine->m_system;
-
-        FMOD::Channel* channel;
-        FMOD::Sound* sound;
-
-        std::string fullPath = CCFileUtils::sharedFileUtils()->fullPathForFilename("click.ogg"_spr, false);;
-        if(engine->m_sfxVolume > 0) {
-            system->createSound(fullPath.c_str(), FMOD_DEFAULT, nullptr, &sound);
-            system->playSound(sound, nullptr, false, &channel);
-            channel->setVolume(engine->m_sfxVolume);
-        }
-
-        geode::Loader::get()->queueInMainThread([this]() { //delay it by a frame because for some reason it crashes the touch dispatcher otherwise ???
-            if(m_pListener && m_pfnSelector){
-                (m_pListener->*m_pfnSelector)(this);
-            }
-        });
+    std::string fullPath = CCFileUtils::sharedFileUtils()->fullPathForFilename("click.ogg"_spr, false);;
+    if(engine->m_sfxVolume > 0) {
+        system->createSound(fullPath.c_str(), FMOD_DEFAULT, nullptr, &sound);
+        system->playSound(sound, nullptr, false, &channel);
+        channel->setVolume(engine->m_sfxVolume);
     }
+
+    geode::Loader::get()->queueInMainThread([this]() { //delay it by a frame because for some reason it crashes the touch dispatcher otherwise ???
+        if(m_pListener && m_pfnSelector){
+            (m_pListener->*m_pfnSelector)(this);
+        }
+    });
 }
 
 void MCButtonChild::selected(){
-
-    onHover();
-
     #ifndef GEODE_IS_ANDROID
     doClick();
     #endif
@@ -179,34 +106,5 @@ void MCButtonChild::activate(){
     #ifdef GEODE_IS_ANDROID
     doClick();
     #endif
-}
-
-void MCButtonChild::update(float dt) {
-
-    auto mousePos = getMousePos();
-
-    auto pos = getParent()->convertToWorldSpace(getPosition());
-    auto size = getContentSize();
-    auto scale = getScale();
-    auto anchorPoint = getAnchorPoint();
-
-    float anchorXSubtract = size.width * scale * anchorPoint.x;
-    float anchorYSubtract = size.height * scale * anchorPoint.y;
-
-    CCRect rect = CCRect(pos.x - anchorXSubtract, pos.y - anchorYSubtract, size.width * scale, size.height * scale);
-
-    if(rect.containsPoint(mousePos)){
-        if(!isHovering){
-            onHover();
-            isHovering = true;
-        }
-    }
-    else{
-        if(isHovering){
-            onHoverExit();
-            isHovering = false;
-        }
-    }
-    
 }
 

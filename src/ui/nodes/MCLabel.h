@@ -1,5 +1,4 @@
-#ifndef _MINECRAFT_LABEL_H_
-#define _MINECRAFT_LABEL_H_
+#pragma once
 
 #include <Geode/Geode.hpp>
 
@@ -16,5 +15,3 @@ public:
     void setColor(ccColor3B color);
 
 };
-
-#endif
