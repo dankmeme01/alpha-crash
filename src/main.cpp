@@ -4,13 +4,48 @@
 
 using namespace geode::prelude;
 
+#include <Geode/modify/CCDirector.hpp>
+#include <Geode/modify/CCMenuItemSpriteExtra.hpp>
+
+class $modify(MyCCMenuItemSpriteExtra, CCMenuItemSpriteExtra){
+
+    struct Fields {
+        cocos2d::SEL_MenuHandler m_buttonCallback;
+        CCObject* m_buttonTarget;
+        bool m_isMCButton = false;
+    };
+
+    bool init(cocos2d::CCNode* p0, cocos2d::CCNode* p1, cocos2d::CCObject* p2, cocos2d::SEL_MenuHandler p3){
+        m_fields->m_buttonCallback = p3;
+        m_fields->m_buttonTarget = p2;
+        return CCMenuItemSpriteExtra::init(p0, p1, p2, p3);
+    }
+
+    void selected(){
+        CCMenuItemSpriteExtra::selected();
+    }
+
+    void unselected(){
+        CCMenuItemSpriteExtra::unselected();
+    }
+
+    void activate(){
+        CCMenuItemSpriteExtra::activate();
+    }
+};
+
+class $modify(MyCCDirector, CCDirector){
+
+	bool replaceScene(CCScene *pScene){
+		return CCDirector::replaceScene(pScene);
+	}
+};
+
 class $modify(MyMenuLayer, MenuLayer) {
 	bool init() {
 		if (!MenuLayer::init()) {
 			return false;
 		}
-
-		log::debug("Hello from my MenuLayer::init hook! This layer has {} children.", this->getChildrenCount());
 
 		auto myButton = CCMenuItemSpriteExtra::create(
 			CCSprite::createWithSpriteFrameName("GJ_likeBtn_001.png"),
