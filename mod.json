@@ -26,34 +26,5 @@
             "assets/shaders/blur/*",
             "assets/logo.ico"
         ]
-    },
-    "dependencies": [
-        {
-            "id": "geode.node-ids",
-            "version": ">=v1.12.0-alpha.2",
-            "importance": "required"
-        }
-    ],
-    "incompatibilities": [
-        {
-            "id": "ninxout.redash",
-            "version": "*",
-            "importance": "breaking"
-        },
-        {
-            "id": "muhammadgames.bettermenu",
-            "version": "*",
-            "importance": "breaking"
-        },
-        {
-            "id": "sanes.daily-transfer",
-            "version": "*",
-            "importance": "breaking"
-        },
-        {
-            "id": "undefined0.icon_ninja",
-            "version": "*",
-            "importance": "breaking"
-        }
-    ]
+    }
 }
